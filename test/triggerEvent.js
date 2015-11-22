@@ -1,3 +1,4 @@
+/*eslint-disable */
 /**
  * @see https://github.com/adamsanderson/trigger-event
  */
@@ -162,3 +163,4 @@ var initializers = {
     return event.initCustomEvent(name, o.bubbles, o.cancelable, o.detail);
   }
 };
+/*eslint-enable */

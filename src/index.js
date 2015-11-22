@@ -1,10 +1,10 @@
 // IE10+ Support
 // inspired by zepto event https://github.com/madrobby/zepto/blob/master/src/event.js
 
-let handlers = {};
+const handlers = {};
 
-let specialEvents = {};
-specialEvents.click = specialEvents.mousedown = specialEvents.mouseup = specialEvents.mousemove = 'MouseEvents'
+const specialEvents = {};
+specialEvents.click = specialEvents.mousedown = specialEvents.mouseup = specialEvents.mousemove = 'MouseEvents';
 
 // every element and callback function will have an unique dtId
 let _dtId = 1;
@@ -25,50 +25,41 @@ function getDtId(obj) {
  * @return {Object} An Object with `e` and `ns` key
  */
 function parse(event) {
-  let dotIndex = event.indexOf('.');
+  const dotIndex = event.indexOf('.');
   if (dotIndex > 0) {
     return {
       e: event.substring(0, event.indexOf('.')),
       ns: event.substring(dotIndex + 1, event.length)
-    }
-  } else {
-    return {
-      e: event
-    }
+    };
   }
+
+  return { e: event };
 }
 
 /**
  * Find matched event handlers
- * @param  {Element} el
+ * @param  {Element} el the element to find
  * @param  {String} selector Used by event delegation, null if not
  * @param  {String} event Event string may with namespace
- * @param  {Function} callback
+ * @param  {Function} callback the callback to find, optional
  * @return {Array} Array of handlers bind to el
  */
 function findHandlers(el, selector, event, callback) {
   event = parse(event);
   return (handlers[getDtId(el)] || []).filter(handler => {
     return handler
-      && (!event.e  || handler.e === event.e)
+      && (!event.e || handler.e === event.e)
       && (!event.ns || handler.ns === event.ns)
       && (!callback || handler.callback === callback)
-      && (!selector || handler.selector === selector)
+      && (!selector || handler.selector === selector);
   });
 }
 
-/**
- * @param  {Element}
- * @param  {[type]}
- * @param  {[type]}
- * @param  {Function}
- * @return {[type]}
- */
 function removeEvent(el, selector, event, callback) {
-  let eventName = parse(event).e;
+  const eventName = parse(event).e;
 
-  let handlers = findHandlers(el, selector, event, callback);
-  handlers.forEach(handler => {
+  const matchedHandlers = findHandlers(el, selector, event, callback);
+  matchedHandlers.forEach(handler => {
     if (el.removeEventListener) {
       el.removeEventListener(eventName, handler.delegator || handler.callback);
     } else if (el.detachEvent) {
@@ -80,8 +71,8 @@ function removeEvent(el, selector, event, callback) {
 
 // delegator 只用于 delegate 时有用。
 function bindEvent(el, selector, event, callback, delegator) {
-  let eventName = parse(event).e;
-  let ns = parse(event).ns;
+  const eventName = parse(event).e;
+  const ns = parse(event).ns;
 
   if (el.addEventListener) {
     el.addEventListener(eventName, delegator || callback, false);
@@ -90,8 +81,8 @@ function bindEvent(el, selector, event, callback, delegator) {
   }
 
   // push events to handlers
-  let id = getDtId(el);
-  let elHandlers = (handlers[id] || (handlers[id] = []));
+  const id = getDtId(el);
+  const elHandlers = (handlers[id] || (handlers[id] = []));
   elHandlers.push({
     delegator: delegator,
     callback: callback,
@@ -105,10 +96,10 @@ const Events = {
   /**
    * Register a callback
    *
-   * @param  {Element} el
-   * @param  {String} eventType
-   * @param  {Function} callback
-   * @return {Null}
+   * @param  {Element} el the element to bind event to
+   * @param  {String} eventType event type, can with namesapce
+   * @param  {Function} callback callback to invoke
+   * @return {Null} return null
    */
   on(el, eventType, callback) {
     bindEvent(el, null, eventType, callback);
@@ -117,10 +108,10 @@ const Events = {
   /**
    * Unregister a callback
    *
-   * @param  {Element} el
-   * @param  {String} eventType
-   * @param  {Function} callback Optional
-   * @return {Null}
+   * @param  {Element} el the element to bind event to
+   * @param  {String} eventType event type, can with namesapce
+   * @param  {Function} callback optional, callback to invoke
+   * @return {Null} return null
    */
   off(el, eventType, callback) {
     // find callbacks
@@ -130,13 +121,13 @@ const Events = {
   /**
    * Register a callback that will execute exactly once
    *
-   * @param  {Element} el
-   * @param  {String} eventType
-   * @param  {Function} callback
-   * @return {Null}
+   * @param  {Element} el the element to bind event to
+   * @param  {String} eventType event type, can with namesapce
+   * @param  {Function} callback callback to invoke
+   * @return {Null} return null
    */
   once(el, eventType, callback) {
-    let recursiveFunction = e => {
+    const recursiveFunction = e => {
       Events.off(e.currentTarget, e.type, recursiveFunction);
       return callback(e);
     };
@@ -144,22 +135,14 @@ const Events = {
     this.on(el, eventType, recursiveFunction);
   },
 
-  /**
-   * Delegate a callback to selector under el
-   *
-   * @param  {Element} el
-   * @param  {String} selector
-   * @param  {String} eventType
-   * @param  {Function} callback
-   * @return {Null}
-   */
+  // Delegate a callback to selector under el
   delegate(el, selector, eventType, callback) {
     // bind event to el. and check if selector match
-    let delegator = e => {
-      let els = el.querySelectorAll(selector);
+    const delegator = e => {
+      const els = el.querySelectorAll(selector);
       let matched = false;
-      for(let i = 0; i < els.length; i++) {
-        let _el = els[i];
+      for (let i = 0; i < els.length; i++) {
+        const _el = els[i];
         if (_el === e.target || _el.contains(e.target)) {
           matched = _el;
           break;
@@ -168,35 +151,27 @@ const Events = {
       if (matched) {
         callback.apply(matched, [].slice.call(arguments));
       }
-    }
+    };
 
     bindEvent(el, selector, eventType, callback, delegator);
   },
 
-  /**
-   * Undelegate a callback to selector under el
-   *
-   * @param  {Element} el
-   * @param  {String} selector
-   * @param  {String} eventType
-   * @param  {Function} callback
-   * @return {Null}
-   */
+  // Undelegate a callback to selector under el
   undelegate(el, selector, eventType, callback) {
     removeEvent(el, selector, eventType, callback);
   },
 
-  /**
-   * Dispatch an event with props to el
-   * @param  {Element} el
-   * @param  {String} eventType
-   * @param  {Object} props Optional
-   * @return {Null}
-   */
+  // Dispatch an event with props to el
   trigger(el, eventType, props) {
-    let event = document.createEvent(specialEvents[eventType] || 'Events');
+    const event = document.createEvent(specialEvents[eventType] || 'Events');
     let bubbles = true;
-    if (props) for (let name in props) (name == 'bubbles') ? (bubbles = !!props[name]) : (event[name] = props[name])
+    if (props) {
+      for (const name in props) {
+        if ({}.hasOwnProperty.call(props, name)) {
+          (name === 'bubbles') ? (bubbles = !!props[name]) : (event[name] = props[name]);
+        }
+      }
+    }
     event.initEvent(eventType, bubbles, true);
     el.dispatchEvent(event);
   }

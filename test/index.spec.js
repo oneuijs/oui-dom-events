@@ -17,12 +17,12 @@ function injectHTML() {
     </ul>
   </div>
   `;
-};
+}
 
 function uninjectHTML() {
-  var el = document.querySelector('#event-test');
+  const el = document.querySelector('#event-test');
   el.parentNode.removeChild(el);
-};
+}
 
 describe('Events', () => {
   describe('.on and .off', () => {
@@ -35,8 +35,8 @@ describe('Events', () => {
     });
 
     it('on should invoke callback when event fired', () => {
-      let callback = chai.spy();
-      let el = document.querySelector('#event-test ul');
+      const callback = chai.spy();
+      const el = document.querySelector('#event-test ul');
       Events.on(el, 'click', callback);
 
       triggerEvent(el, 'click');
@@ -44,8 +44,8 @@ describe('Events', () => {
     });
 
     it('on bind same callback twice will only invoke once', () => {
-      let callback = chai.spy();
-      let el = document.querySelector('#event-test ul');
+      const callback = chai.spy();
+      const el = document.querySelector('#event-test ul');
       Events.on(el, 'click', callback);
       Events.on(el, 'click', callback);
 
@@ -54,10 +54,10 @@ describe('Events', () => {
     });
 
     it('on can bind two events', () => {
-      let callback1 = chai.spy();
-      let callback2 = chai.spy();
-      let callback3 = chai.spy();
-      let el = document.querySelector('#event-test ul');
+      const callback1 = chai.spy();
+      const callback2 = chai.spy();
+      const callback3 = chai.spy();
+      const el = document.querySelector('#event-test ul');
       Events.on(el, 'click', callback1);
       Events.on(el, 'click', callback2);
 
@@ -68,8 +68,8 @@ describe('Events', () => {
     });
 
     it('off can remove on event', () => {
-      let callback = chai.spy();
-      let el = document.querySelector('#event-test ul');
+      const callback = chai.spy();
+      const el = document.querySelector('#event-test ul');
       Events.on(el, 'click', callback);
       Events.off(el, 'click', callback);
 
@@ -88,8 +88,8 @@ describe('Events', () => {
     });
 
     it('once will only invoke callback once', () => {
-      let callback = chai.spy();
-      let el = document.querySelector('#event-test ul');
+      const callback = chai.spy();
+      const el = document.querySelector('#event-test ul');
       Events.once(el, 'click', callback);
 
       triggerEvent(el, 'click');
@@ -98,8 +98,8 @@ describe('Events', () => {
     });
 
     it('on will invoke callback many times as you trigger', () => {
-      let callback = chai.spy();
-      let el = document.querySelector('#event-test ul');
+      const callback = chai.spy();
+      const el = document.querySelector('#event-test ul');
       Events.on(el, 'click', callback);
 
       triggerEvent(el, 'click');
@@ -109,8 +109,8 @@ describe('Events', () => {
     });
 
     it('off can unbind once', () => {
-      let callback = chai.spy();
-      let el = document.querySelector('#event-test ul');
+      const callback = chai.spy();
+      const el = document.querySelector('#event-test ul');
       Events.once(el, 'click', callback);
       Events.off(el, 'click');
 
@@ -129,8 +129,8 @@ describe('Events', () => {
     });
 
     it('on can bind with namespace', () => {
-      let callback = chai.spy();
-      let el = document.querySelector('#event-test ul');
+      const callback = chai.spy();
+      const el = document.querySelector('#event-test ul');
       Events.on(el, 'click.testns', callback);
 
       triggerEvent(el, 'click');
@@ -138,8 +138,8 @@ describe('Events', () => {
     });
 
     it('off can remove event with namespace', () => {
-      let callback = chai.spy();
-      let el = document.querySelector('#event-test ul');
+      const callback = chai.spy();
+      const el = document.querySelector('#event-test ul');
       Events.on(el, 'click.testns', callback);
       Events.off(el, 'click', callback);
 
@@ -148,12 +148,12 @@ describe('Events', () => {
     });
 
     it('off with namespace only remove that namespace', () => {
-      let callback1 = chai.spy();
-      let callback2 = chai.spy();
-      let el = document.querySelector('#event-test ul');
+      const callback1 = chai.spy();
+      const callback2 = chai.spy();
+      const el = document.querySelector('#event-test ul');
       Events.on(el, 'click.testns', callback1);
       Events.on(el, 'click.anotherns', callback2);
-      Events.off(el,'click.anotherns');
+      Events.off(el, 'click.anotherns');
 
       triggerEvent(el, 'click');
       expect(callback1).to.have.been.called.once;
@@ -161,12 +161,12 @@ describe('Events', () => {
     });
 
     it('off without namespace will remove all events', () => {
-      let callback1 = chai.spy();
-      let callback2 = chai.spy();
-      let el = document.querySelector('#event-test ul');
+      const callback1 = chai.spy();
+      const callback2 = chai.spy();
+      const el = document.querySelector('#event-test ul');
       Events.on(el, 'click.testns', callback1);
       Events.on(el, 'click.anotherns', callback2);
-      Events.off(el,'click');
+      Events.off(el, 'click');
 
       triggerEvent(el, 'click');
       expect(callback1).to.have.not.been.called;
@@ -185,8 +185,8 @@ describe('Events', () => {
     });
 
     it('delegate can bind event', () => {
-      let callback = chai.spy();
-      let el = document.querySelector('#event-test ul');
+      const callback = chai.spy();
+      const el = document.querySelector('#event-test ul');
       Events.delegate(el, 'li.red', 'click', callback);
 
       triggerEvent(document.querySelector('#event-test ul li.red'), 'click');
@@ -197,9 +197,9 @@ describe('Events', () => {
     });
 
     it('undelegate can remove event delegation', () => {
-      let el = document.querySelector('#event-test ul');
-      let callback1 = chai.spy();
-      let callback2 = chai.spy();
+      const el = document.querySelector('#event-test ul');
+      const callback1 = chai.spy();
+      const callback2 = chai.spy();
       Events.delegate(el, 'li.red', 'click', callback1);
       Events.delegate(el, 'li.green', 'click', callback2);
 
@@ -212,8 +212,8 @@ describe('Events', () => {
     });
 
     it('off can also remove event delegation', () => {
-      let callback = chai.spy();
-      let el = document.querySelector('#event-test ul');
+      const callback = chai.spy();
+      const el = document.querySelector('#event-test ul');
       Events.delegate(el, 'li.red', 'click', callback);
       Events.off(el, 'li.red', 'click');
 
@@ -222,12 +222,12 @@ describe('Events', () => {
     });
 
     it('off with namespace only remove that namespace', () => {
-      let callback1 = chai.spy();
-      let callback2 = chai.spy();
-      let el = document.querySelector('#event-test ul');
+      const callback1 = chai.spy();
+      const callback2 = chai.spy();
+      const el = document.querySelector('#event-test ul');
       Events.delegate(el, 'li.red', 'click.testns', callback1);
       Events.delegate(el, 'li.red', 'click.anotherns', callback2);
-      Events.off(el,'click.anotherns');
+      Events.off(el, 'click.anotherns');
 
       triggerEvent(el.querySelector('li.red'), 'click');
       expect(callback1).to.have.been.called.once;
@@ -235,12 +235,12 @@ describe('Events', () => {
     });
 
     it('off without namespace will remove all events', () => {
-      let callback1 = chai.spy();
-      let callback2 = chai.spy();
-      let el = document.querySelector('#event-test ul');
+      const callback1 = chai.spy();
+      const callback2 = chai.spy();
+      const el = document.querySelector('#event-test ul');
       Events.delegate(el, 'li.red', 'click.testns', callback1);
       Events.delegate(el, 'li.red', 'click.anotherns', callback2);
-      Events.off(el,'click.anotherns');
+      Events.off(el, 'click.anotherns');
 
       triggerEvent(el.querySelector('li.red'), 'click');
       expect(callback1).to.have.not.been.called;
@@ -258,8 +258,8 @@ describe('Events', () => {
     });
 
     it('can trigger events', () => {
-      let callback = chai.spy();
-      let el = document.querySelector('#event-test ul');
+      const callback = chai.spy();
+      const el = document.querySelector('#event-test ul');
       Events.on(el, 'click', callback);
 
       Events.trigger(el, 'click');
@@ -267,8 +267,8 @@ describe('Events', () => {
     });
 
     it('can trigger scroll events', () => {
-      let callback = chai.spy();
-      let el = document.querySelector('#event-test ul');
+      const callback = chai.spy();
+      const el = document.querySelector('#event-test ul');
       Events.on(el, 'scroll', callback);
 
       Events.trigger(el, 'scroll');
@@ -276,8 +276,8 @@ describe('Events', () => {
     });
 
     it('can trigger resize events', () => {
-      let callback = chai.spy();
-      let el = document.querySelector('#event-test ul');
+      const callback = chai.spy();
+      const el = document.querySelector('#event-test ul');
       Events.on(el, 'resize', callback);
 
       Events.trigger(el, 'resize');
@@ -285,8 +285,8 @@ describe('Events', () => {
     });
 
     it('can trigger with params', () => {
-      let callback = chai.spy();
-      let el = document.querySelector('#event-test ul');
+      const callback = chai.spy();
+      const el = document.querySelector('#event-test ul');
       Events.on(el, 'resize', callback);
 
       Events.trigger(el, 'resize', {foo: 'bar'});
