@@ -1,6 +1,5 @@
 .DS_Store
 *.log
-node_modules
-lib
+examples
+test
 coverage
-logs
