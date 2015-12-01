@@ -36,19 +36,17 @@ function parse(event) {
       e: event.substring(0, event.indexOf('.')),
       ns: event.substring(dotIndex + 1, event.length)
     };
-  } else {
-    return {
-      e: event
-    };
   }
+
+  return { e: event };
 }
 
 /**
  * Find matched event handlers
- * @param  {Element} el
+ * @param  {Element} el the element to find
  * @param  {String} selector Used by event delegation, null if not
  * @param  {String} event Event string may with namespace
- * @param  {Function} callback
+ * @param  {Function} callback the callback to find, optional
  * @return {Array} Array of handlers bind to el
  */
 function findHandlers(el, selector, event, callback) {
@@ -58,18 +56,11 @@ function findHandlers(el, selector, event, callback) {
   });
 }
 
-/**
- * @param  {Element}
- * @param  {[type]}
- * @param  {[type]}
- * @param  {Function}
- * @return {[type]}
- */
 function removeEvent(el, selector, event, callback) {
   var eventName = parse(event).e;
 
-  var handlers = findHandlers(el, selector, event, callback);
-  handlers.forEach(function (handler) {
+  var matchedHandlers = findHandlers(el, selector, event, callback);
+  matchedHandlers.forEach(function (handler) {
     if (el.removeEventListener) {
       el.removeEventListener(eventName, handler.delegator || handler.callback);
     } else if (el.detachEvent) {
@@ -106,10 +97,10 @@ var Events = {
   /**
    * Register a callback
    *
-   * @param  {Element} el
-   * @param  {String} eventType
-   * @param  {Function} callback
-   * @return {Null}
+   * @param  {Element} el the element to bind event to
+   * @param  {String} eventType event type, can with namesapce
+   * @param  {Function} callback callback to invoke
+   * @return {Null} return null
    */
 
   on: function on(el, eventType, callback) {
@@ -119,10 +110,10 @@ var Events = {
   /**
    * Unregister a callback
    *
-   * @param  {Element} el
-   * @param  {String} eventType
-   * @param  {Function} callback Optional
-   * @return {Null}
+   * @param  {Element} el the element to bind event to
+   * @param  {String} eventType event type, can with namesapce
+   * @param  {Function} callback optional, callback to invoke
+   * @return {Null} return null
    */
   off: function off(el, eventType, callback) {
     // find callbacks
@@ -132,10 +123,10 @@ var Events = {
   /**
    * Register a callback that will execute exactly once
    *
-   * @param  {Element} el
-   * @param  {String} eventType
-   * @param  {Function} callback
-   * @return {Null}
+   * @param  {Element} el the element to bind event to
+   * @param  {String} eventType event type, can with namesapce
+   * @param  {Function} callback callback to invoke
+   * @return {Null} return null
    */
   once: function once(el, eventType, callback) {
     var recursiveFunction = function recursiveFunction(e) {
@@ -146,18 +137,8 @@ var Events = {
     this.on(el, eventType, recursiveFunction);
   },
 
-  /**
-   * Delegate a callback to selector under el
-   *
-   * @param  {Element} el
-   * @param  {String} selector
-   * @param  {String} eventType
-   * @param  {Function} callback
-   * @return {Null}
-   */
+  // Delegate a callback to selector under el
   delegate: function delegate(el, selector, eventType, callback) {
-    var _arguments = arguments;
-
     // bind event to el. and check if selector match
     var delegator = function delegator(e) {
       var els = el.querySelectorAll(selector);
@@ -170,39 +151,30 @@ var Events = {
         }
       }
       if (matched) {
-        callback.apply(matched, [].slice.call(_arguments));
+        callback.apply(matched, [].slice.call(arguments));
       }
     };
 
     bindEvent(el, selector, eventType, callback, delegator);
   },
 
-  /**
-   * Undelegate a callback to selector under el
-   *
-   * @param  {Element} el
-   * @param  {String} selector
-   * @param  {String} eventType
-   * @param  {Function} callback
-   * @return {Null}
-   */
+  // Undelegate a callback to selector under el
   undelegate: function undelegate(el, selector, eventType, callback) {
     removeEvent(el, selector, eventType, callback);
   },
 
-  /**
-   * Dispatch an event with props to el
-   * @param  {Element} el
-   * @param  {String} eventType
-   * @param  {Object} props Optional
-   * @return {Null}
-   */
+  // Dispatch an event with props to el
   trigger: function trigger(el, eventType, props) {
     var event = document.createEvent(specialEvents[eventType] || 'Events');
     var bubbles = true;
-    if (props) for (var name in props) {
-      name == 'bubbles' ? bubbles = !!props[name] : event[name] = props[name];
-    }event.initEvent(eventType, bubbles, true);
+    if (props) {
+      for (var name in props) {
+        if (({}).hasOwnProperty.call(props, name)) {
+          name === 'bubbles' ? bubbles = !!props[name] : event[name] = props[name];
+        }
+      }
+    }
+    event.initEvent(eventType, bubbles, true);
     el.dispatchEvent(event);
   }
 };
