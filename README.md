@@ -36,7 +36,7 @@ E.off(el, 'click.slider');
 ```
 
 ### .off(element, eventName, fn)
-Remove fn from being called when eventName is triggered on element
+Remove `fn` from being called when `eventName` is triggered on `element`
 
 ```js
 // this also unbind events with namespace
@@ -75,7 +75,7 @@ E.off(el, 'click');
 ### .trigger(element, eventName, dataObject)
 Trigger an `eventName` with `dataObject` on `element`
 
-```
+```js
 E.trigger(el, 'click', {key1: 'data1'})
 ```
 
