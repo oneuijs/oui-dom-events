@@ -138,7 +138,7 @@ const Events = {
   // Delegate a callback to selector under el
   delegate(el, selector, eventType, callback) {
     // bind event to el. and check if selector match
-    const delegator = e => {
+    const delegator = function(e) {
       const els = el.querySelectorAll(selector);
       let matched = false;
       for (let i = 0; i < els.length; i++) {
