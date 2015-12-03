@@ -199,7 +199,9 @@ describe('Events', () => {
     it('undelegate can remove event delegation', () => {
       const el = document.querySelector('#event-test ul');
       const callback1 = chai.spy();
-      const callback2 = chai.spy();
+      const callback2 = chai.spy(function(event) {
+        expect(event.type).to.eq('click');
+      });
       Events.delegate(el, 'li.red', 'click', callback1);
       Events.delegate(el, 'li.green', 'click', callback2);
 
