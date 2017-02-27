@@ -58,6 +58,8 @@ function findHandlers(el, selector, event, callback) {
 function removeEvent(el, selector, event, callback) {
   const eventName = parse(event).e;
 
+  if (!el._dtId) return false;
+  const elHandlers = handlers[getDtId(el)];
   const matchedHandlers = findHandlers(el, selector, event, callback);
   matchedHandlers.forEach(handler => {
     if (el.removeEventListener) {
@@ -65,7 +67,7 @@ function removeEvent(el, selector, event, callback) {
     } else if (el.detachEvent) {
       el.detachEvent('on' + eventName, handler.delegator || handler.callback);
     }
-    handler = null;
+    elHandlers.splice(elHandlers.findIndex((item) => handler === item), 1);
   });
 }
 
