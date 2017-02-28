@@ -67,7 +67,7 @@ function removeEvent(el, selector, event, callback) {
     } else if (el.detachEvent) {
       el.detachEvent('on' + eventName, handler.delegator || handler.callback);
     }
-    elHandlers.splice(elHandlers.findIndex((item) => handler === item), 1);
+    elHandlers.splice(elHandlers.indexOf(handler), 1);
   });
 }
 
