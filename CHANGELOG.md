@@ -1,3 +1,7 @@
+0.2.2 / 2017-06-14
+==================
+- fix the removeEvent func
+
 0.2.1 / 2015-12-01
 ==================
 - Update README API docs

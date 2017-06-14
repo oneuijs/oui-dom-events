@@ -1,6 +1,6 @@
 {
   "name": "oui-dom-events",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "DOM Utils of OneUI",
   "main": "build/index.js",
   "author": "oneui group",

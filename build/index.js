@@ -59,6 +59,8 @@ function findHandlers(el, selector, event, callback) {
 function removeEvent(el, selector, event, callback) {
   var eventName = parse(event).e;
 
+  if (!el._dtId) return false;
+  var elHandlers = handlers[getDtId(el)];
   var matchedHandlers = findHandlers(el, selector, event, callback);
   matchedHandlers.forEach(function (handler) {
     if (el.removeEventListener) {
@@ -66,7 +68,7 @@ function removeEvent(el, selector, event, callback) {
     } else if (el.detachEvent) {
       el.detachEvent('on' + eventName, handler.delegator || handler.callback);
     }
-    handler = null;
+    elHandlers.splice(elHandlers.indexOf(handler), 1);
   });
 }
 
@@ -102,10 +104,10 @@ var Events = {
    * @param  {Function} callback callback to invoke
    * @return {Null} return null
    */
-
   on: function on(el, eventType, callback) {
     bindEvent(el, null, eventType, callback);
   },
+
 
   /**
    * Unregister a callback
@@ -119,6 +121,7 @@ var Events = {
     // find callbacks
     removeEvent(el, null, eventType, callback);
   },
+
 
   /**
    * Register a callback that will execute exactly once
@@ -136,6 +139,7 @@ var Events = {
 
     this.on(el, eventType, recursiveFunction);
   },
+
 
   // Delegate a callback to selector under el
   delegate: function delegate(el, selector, eventType, callback) {
@@ -158,10 +162,12 @@ var Events = {
     bindEvent(el, selector, eventType, callback, delegator);
   },
 
+
   // Undelegate a callback to selector under el
   undelegate: function undelegate(el, selector, eventType, callback) {
     removeEvent(el, selector, eventType, callback);
   },
+
 
   // Dispatch an event with props to el
   trigger: function trigger(el, eventType, props) {
@@ -169,7 +175,7 @@ var Events = {
     var bubbles = true;
     if (props) {
       for (var name in props) {
-        if (({}).hasOwnProperty.call(props, name)) {
+        if ({}.hasOwnProperty.call(props, name)) {
           name === 'bubbles' ? bubbles = !!props[name] : event[name] = props[name];
         }
       }
